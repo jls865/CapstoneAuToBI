@@ -1,0 +1,54 @@
+<project default="main" basedir ="." name ="LingoPros">
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+    
+
+    <target name="compile" depends = "clean">
+        <mkdir dir="./build"/>
+        <mkdir dir="./build/classes"/>
+        <javac srcdir="./src" destdir="./build/classes"
+               includeantruntime="false">
+        <classpath>
+        <path id="build.classpath">
+            <pathelement path = "**/*.jar"/>
+        </path>
+        </classpath>
+        </javac>
+    </target>
+
+    <target name="jar" depends ="compile">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/LingoPros.jar" basedir="./build/classes">        
+        <manifest>
+                <attribute name="Main-Class" value="LingoPros.autobiRunner"/>
+                <attribute name = "Class-Path" value = "./lib"/>
+        </manifest>
+        <zipfileset dir = "./lib" prefix ="lib"/>
+     
+        </jar>
+    </target>
+    
+    <target name="run" depends ="jar, arguments">
+        <java jar="./build/jar/LingoPros.jar" fork="true">
+            <arg value = "${input}"/>
+            <arg value = "${output}"/>
+            <arg value = "${model}"/>
+            <arg value = "${analysis}"/>
+        </java>
+    </target>
+    
+    <target name ="arguments" unless="args" description="Command line">
+        <input addProperty="input" message ="Type input file:"/>
+        <input addProperty="output" message ="Type output file:"/>
+        <input addProperty="model" message ="Type model number:"/>
+        <input addProperty="analysis" message ="Type analysis number:"/>
+    </target>
+
+    
+    <target name = "main" depends="clean, run"/>
+    <target name = "clean-build" depends = "clean, jar"/>
+    
+
+</project>
